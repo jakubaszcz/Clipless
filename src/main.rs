@@ -1,5 +1,6 @@
 use global_hotkey::{GlobalHotKeyEvent, GlobalHotKeyManager, hotkey::{HotKey, Modifiers, Code}};
 use winit::event_loop::EventLoop;
+use selection::get_text;
 
 fn main() {
     let event_loop = EventLoop::new().unwrap();
@@ -16,7 +17,8 @@ fn main() {
 
     event_loop.run(move |_event, _| {
         if let Ok(_event) = receiver.try_recv() {
-            println!("{:?}", _event);
+            let selected_text = get_text();
+            println!("{}", selected_text);
         }
     }).unwrap();
 }
