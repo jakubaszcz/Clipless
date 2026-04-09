@@ -2,8 +2,7 @@
 use eframe::egui::ViewportCommand;
 use global_hotkey::{GlobalHotKeyEvent, HotKeyState};
 use rusqlite::Connection;
-use selection::get_text;
-use crate::{database};
+use crate::{database, selected_text};
 
 // Define the app struct
 pub(crate) struct MyApp {
@@ -23,7 +22,7 @@ pub(crate) fn handle_input(app: &mut MyApp, ctx: &egui::Context) {
         }
 
         if _event.id == app.copy_hot_key_id {
-            let text = get_text();
+            let text = selected_text::select::get();
 
             if !text.trim().is_empty() {
                 println!("Selected text: {}", text);

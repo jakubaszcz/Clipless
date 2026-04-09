@@ -1,5 +1,4 @@
-﻿use std::collections::HashMap;
-use rusqlite::Connection;
+﻿use rusqlite::Connection;
 use directories::ProjectDirs;
 use std::fs;
 use std::path::PathBuf;

@@ -676,7 +676,6 @@ dependencies = [
  "global-hotkey",
  "rusqlite",
  "selection",
- "winit",
 ]
 
 [[package]]

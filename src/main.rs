@@ -1,5 +1,6 @@
 mod database;
 mod interface;
+mod selected_text;
 
 use global_hotkey::GlobalHotKeyManager;
 use global_hotkey::hotkey::{Code, HotKey, Modifiers};
