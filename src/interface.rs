@@ -1,5 +1,5 @@
 ﻿use eframe::{egui, App, Frame};
-use eframe::egui::ViewportCommand;
+use eframe::egui::{Color32, ViewportCommand};
 use global_hotkey::{GlobalHotKeyEvent, HotKeyState};
 use rusqlite::Connection;
 use crate::{database, selected_text};
@@ -49,13 +49,39 @@ pub(crate) fn handle_input(app: &mut MyApp, ctx: &egui::Context) {
     }
 }
 
+fn modal_box(ui: &mut egui::Ui, id: u32, text: &str, connection: &Connection) {
+    egui::Frame::popup(ui.style())
+        .show(ui, |ui| {
+           ui.label(text);
+            ui.vertical_centered(|ui| {
+                if ui.button("Copy").clicked() {
+                    ui.ctx().copy_text(text.to_string());
+                    ui.close_menu()
+                }
+                if ui.button("Delete").clicked() {
+                    database::remove_clip(&connection, id).unwrap();
+                    ui.close_menu()
+                }
+            })
+        }); 
+}
+
 // Define the clip box function
 fn clip_box(ui: &mut egui::Ui, id: u32, text: &str, connection: &Connection) {
+
+    let max_text_length = 25;
+
+    let display_text = if text.chars().count() > max_text_length {
+        format!("{}...", text.chars().take(max_text_length).collect::<String>())
+    } else {
+        text.to_string()
+    };
+
     egui::Frame::group(ui.style())
         .inner_margin(egui::Margin::same(8))
         .show(ui, |ui| {
             ui.vertical(|ui| {
-                ui.label(text);
+                ui.label(display_text);
 
                 ui.horizontal(|ui| {
                     if ui.button("Copy").clicked() {
@@ -63,6 +89,22 @@ fn clip_box(ui: &mut egui::Ui, id: u32, text: &str, connection: &Connection) {
                     }
                     if ui.button("Delete").clicked() {
                         database::remove_clip(&connection, id).unwrap();
+                    }
+                    if text.len() > max_text_length {
+
+                        let modal_id = egui::Id::new(("modal", id));
+
+                        let mut is_open = ui.data(|d| d.get_temp::<bool>(modal_id).unwrap_or(false));
+
+                        if ui.button("Show").clicked() {
+                            is_open = true;
+                        }
+
+                        if is_open {
+                            modal_box(ui, id, text, connection);
+                        }
+
+                        ui.data_mut(|d| d.insert_temp(modal_id, is_open));
                     }
                 })
             });
