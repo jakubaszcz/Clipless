@@ -10,3 +10,6 @@ eframe = "0.31.0"
 rusqlite = { version = "0.39", features = ["bundled"] }
 directories = "6.0.0"
 chrono = "0.4.44"
+
+[build-dependencies]
+winres = "0.1.12"
